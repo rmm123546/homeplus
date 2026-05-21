@@ -3,8 +3,73 @@
 {% block page_title %}Crear reporte{% endblock %}
 {% block nav_reportes %}active{% endblock %}
 
+{% block extra_head %}
+<style>
+    .filtros-section {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 18px;
+        margin-bottom: 20px;
+        background: var(--dark3);
+    }
+    .filtros-title {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--gold);
+        font-weight: 600;
+        margin-bottom: 14px;
+    }
+    .filtros-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    .filtro-group label {
+        display: block;
+        font-size: 0.78rem;
+        color: var(--muted2);
+        margin-bottom: 5px;
+    }
+    .filtro-group select,
+    .filtro-group input {
+        width: 100%;
+        background: var(--dark4);
+        border: 1px solid var(--border2);
+        border-radius: 7px;
+        color: var(--text);
+        padding: 8px 10px;
+        font-size: 0.85rem;
+        outline: none;
+        transition: border 0.18s;
+    }
+    .filtro-group select:focus,
+    .filtro-group input:focus { border-color: var(--gold); }
+    .resumen-filtros {
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin-top: 10px;
+        padding: 8px 12px;
+        background: var(--dark4);
+        border-radius: 6px;
+        border: 1px solid var(--border2);
+        display: none;
+    }
+    .tag {
+        display: inline-block;
+        background: var(--gold-dim);
+        border: 1px solid var(--border);
+        color: var(--gold);
+        border-radius: 4px;
+        padding: 1px 7px;
+        font-size: 0.75rem;
+        margin: 2px 2px 2px 0;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="max-width:560px;">
+<div style="max-width:620px;">
     <div style="margin-bottom:16px;">
         <a href="{% url 'usuarios:admin_reportes' %}" class="btn btn-outline btn-sm">← Volver</a>
     </div>
@@ -12,17 +77,18 @@
     <div class="card">
         <div class="card-title" style="margin-bottom:20px;">Nuevo reporte</div>
 
-        <form method="POST">
+        <form method="POST" id="form-reporte">
             {% csrf_token %}
 
             <div class="form-group" style="margin-bottom:14px;">
                 <label>Título del reporte</label>
-                <input type="text" name="titulo" class="form-control" placeholder="Ej: Resumen mensual Mayo 2025" required>
+                <input type="text" name="titulo" class="form-control"
+                       placeholder="Ej: Resumen mensual Mayo 2025" required>
             </div>
 
             <div class="form-group" style="margin-bottom:14px;">
                 <label>Tipo de reporte</label>
-                <select name="tipo" class="form-control">
+                <select name="tipo" class="form-control" id="select-tipo">
                     <option value="general">📊 Reporte general</option>
                     <option value="usuarios">👥 Reporte de usuarios</option>
                     <option value="profesionales">🔧 Reporte de profesionales</option>
@@ -32,10 +98,70 @@
 
             <div class="form-group" style="margin-bottom:20px;">
                 <label>Descripción / notas (opcional)</label>
-                <textarea name="descripcion" class="form-control" placeholder="Notas adicionales sobre este reporte..."></textarea>
+                <textarea name="descripcion" class="form-control"
+                          placeholder="Notas adicionales sobre este reporte..."></textarea>
             </div>
 
-            <!-- Info de qué incluye cada tipo -->
+            <!-- FILTROS -->
+            <div class="filtros-section">
+                <div class="filtros-title">🔍 Filtros (opcional)</div>
+                <div class="filtros-grid">
+
+                    <div class="filtro-group">
+                        <label>Fecha desde</label>
+                        <input type="date" name="fecha_desde">
+                    </div>
+
+                    <div class="filtro-group">
+                        <label>Fecha hasta</label>
+                        <input type="date" name="fecha_hasta">
+                    </div>
+
+                    <div class="filtro-group" id="filtro-tipo-usuario">
+                        <label>Tipo de usuario</label>
+                        <select name="tipo_usuario">
+                            <option value="">Todos</option>
+                            <option value="cliente">Cliente</option>
+                            <option value="profesional">Profesional</option>
+                        </select>
+                    </div>
+
+                    <div class="filtro-group" id="filtro-estado">
+                        <label>Estado de cuenta</label>
+                        <select name="estado_cuenta">
+                            <option value="">Todos</option>
+                            <option value="aprobado">Aprobado</option>
+                            <option value="pendiente">Pendiente</option>
+                            <option value="rechazado">Rechazado</option>
+                        </select>
+                    </div>
+
+                    <div class="filtro-group" id="filtro-servicio">
+                        <label>Tipo de servicio</label>
+                        <select name="tipo_servicio">
+                            <option value="">Todos</option>
+                            <option value="plomeria">Plomería</option>
+                            <option value="electricidad">Electricidad</option>
+                            <option value="pintura">Pintura</option>
+                            <option value="albanileria">Albañilería</option>
+                            <option value="limpieza">Limpieza del hogar</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+
+                    <div class="filtro-group" id="filtro-ciudad">
+                        <label>Ciudad</label>
+                        <input type="text" name="ciudad" placeholder="Ej: Bogotá">
+                    </div>
+
+                </div>
+
+                <div class="resumen-filtros" id="resumen-filtros">
+                    <span style="color:var(--muted2);">Filtros activos: </span>
+                    <span id="tags-filtros"></span>
+                </div>
+            </div>
+
             <div style="background:var(--gold-dim);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:20px;font-size:0.82rem;color:var(--muted2);line-height:1.7;">
                 <div style="color:var(--gold);font-weight:600;margin-bottom:6px;">¿Qué incluye cada tipo?</div>
                 <b style="color:#fff;">General:</b> totales de usuarios, clientes, profesionales, servicios y registros de 30 días.<br>
@@ -48,4 +174,42 @@
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const selectTipo = document.getElementById('select-tipo');
+const filtroTipoUsuario = document.getElementById('filtro-tipo-usuario');
+const filtroEstado      = document.getElementById('filtro-estado');
+const filtroServicio    = document.getElementById('filtro-servicio');
+const filtroCiudad      = document.getElementById('filtro-ciudad');
+
+function actualizarFiltros() {
+    const tipo = selectTipo.value;
+    const esProfesional = tipo === 'profesionales' || tipo === 'general';
+    const esUsuario     = tipo === 'usuarios' || tipo === 'general' || tipo === 'pendientes';
+    filtroTipoUsuario.style.display = esUsuario     ? '' : 'none';
+    filtroEstado.style.display      = esUsuario     ? '' : 'none';
+    filtroServicio.style.display    = esProfesional ? '' : 'none';
+    filtroCiudad.style.display      = esProfesional ? '' : 'none';
+}
+
+function actualizarResumen() {
+    const labels = { fecha_desde:'Desde', fecha_hasta:'Hasta', tipo_usuario:'Tipo',
+                     estado_cuenta:'Estado', tipo_servicio:'Servicio', ciudad:'Ciudad' };
+    const tags = [];
+    document.querySelectorAll('.filtros-section input, .filtros-section select').forEach(el => {
+        if (el.value && labels[el.name])
+            tags.push(`<span class="tag">${labels[el.name]}: ${el.value}</span>`);
+    });
+    const resumen = document.getElementById('resumen-filtros');
+    document.getElementById('tags-filtros').innerHTML = tags.join('');
+    resumen.style.display = tags.length ? 'block' : 'none';
+}
+
+selectTipo.addEventListener('change', actualizarFiltros);
+document.querySelectorAll('.filtros-section input, .filtros-section select')
+        .forEach(el => el.addEventListener('change', actualizarResumen));
+actualizarFiltros();
+</script>
 {% endblock %}

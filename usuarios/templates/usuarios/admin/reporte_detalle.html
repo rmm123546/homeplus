@@ -15,14 +15,30 @@
         Generado el {{ reporte.fecha_creacion|date:"d/m/Y \a \l\a\s H:i" }}
         {% if reporte.creado_por %} por {{ reporte.creado_por.nombre }}{% endif %}
     </span>
+    <a href="{% url 'usuarios:admin_descargar_reporte_pdf' reporte.pk %}"
+       class="btn btn-sm" style="margin-left:auto;background:var(--gold);color:#1A1A18;font-weight:700;display:inline-flex;align-items:center;gap:6px;">
+        📄 Descargar PDF
+    </a>
     <a href="{% url 'usuarios:admin_eliminar_reporte' reporte.pk %}"
        onclick="return confirm('¿Eliminar este reporte?')"
-       class="btn btn-red btn-sm" style="margin-left:auto;">🗑 Eliminar</a>
+       class="btn btn-red btn-sm">🗑 Eliminar</a>
 </div>
 
 {% if reporte.descripcion %}
 <div class="card" style="margin-bottom:20px;font-size:0.88rem;color:var(--muted2);">
     {{ reporte.descripcion }}
+</div>
+{% endif %}
+
+{% if datos.filtros_aplicados %}
+<div style="margin-bottom:20px;padding:12px 16px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:8px;font-size:0.82rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+    <span style="color:var(--gold);font-weight:600;">🔍 Filtros aplicados:</span>
+    {% if datos.filtros_aplicados.fecha_desde %}<span class="badge badge-profesional">Desde: {{ datos.filtros_aplicados.fecha_desde }}</span>{% endif %}
+    {% if datos.filtros_aplicados.fecha_hasta %}<span class="badge badge-profesional">Hasta: {{ datos.filtros_aplicados.fecha_hasta }}</span>{% endif %}
+    {% if datos.filtros_aplicados.tipo_usuario %}<span class="badge badge-profesional">Tipo: {{ datos.filtros_aplicados.tipo_usuario|capfirst }}</span>{% endif %}
+    {% if datos.filtros_aplicados.estado_cuenta %}<span class="badge badge-profesional">Estado: {{ datos.filtros_aplicados.estado_cuenta|capfirst }}</span>{% endif %}
+    {% if datos.filtros_aplicados.tipo_servicio %}<span class="badge badge-profesional">Servicio: {{ datos.filtros_aplicados.tipo_servicio|capfirst }}</span>{% endif %}
+    {% if datos.filtros_aplicados.ciudad %}<span class="badge badge-profesional">Ciudad: {{ datos.filtros_aplicados.ciudad }}</span>{% endif %}
 </div>
 {% endif %}
 

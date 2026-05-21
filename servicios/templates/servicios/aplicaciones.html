@@ -22,20 +22,24 @@ blacksoft:"#1F1F1F"
 }
 </script>
 
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
 </head>
 
 <body class="bg-blacksoft text-white">
+
 <a href="{% url 'servicios:dashboard' %}"
-class="mb-6 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg border border-white/10">
-←Volver
+class="mb-6 inline-block bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg border border-white/10">
+← Volver
 </a>
 
 <div class="max-w-5xl mx-auto p-8">
 
 <h1 class="text-3xl font-bold mb-8">
-   
 Profesionales interesados
 </h1>
+
 <!-- FILTROS -->
 <div class="mb-8">
 
@@ -76,7 +80,7 @@ class="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white">
 
 {% for item in data %}
 
-<div class="bg-white/5 p-6 rounded-xl border border-white/10">
+<div class="bg-white/5 p-6 rounded-xl border border-white/10 hover:shadow-xl transition">
 
 <!-- INFO PROFESIONAL -->
 <h3 class="text-lg font-bold mb-1">
@@ -93,11 +97,20 @@ Sin calificaciones
 </p>
 {% endif %}
 
+<!-- BOTONES -->
+<div class="flex gap-2 mt-3">
+
+<a href="{% url 'servicios:ver_perfil' item.aplicacion.profesional.id_usuario %}"
+class="bg-white/10 px-3 py-1 rounded text-xs hover:bg-white/20 transition">
+<i class="fas fa-user mr-1"></i> Ver perfil
+</a>
+
+</div>
 
 <!-- VISITA -->
 {% if item.visita %}
 
-<p class="text-sm text-gray-400">
+<p class="text-sm text-gray-400 mt-4">
 📅 Fecha propuesta:
 <span class="text-white font-semibold">
 {{ item.visita.fecha_propuesta }}
@@ -114,15 +127,14 @@ ${{ item.visita.costo }}
 {% endif %}
 
 <!-- ESTADO -->
-<p class="text-xs mt-2 text-gray-500">
+<p class="text-xs mt-3 text-gray-500">
 Estado: {{ item.aplicacion.get_estado_display }}
 </p>
 
-<!-- BOTÓN -->
+<!-- BOTÓN ACEPTAR -->
 {% if item.aplicacion.estado == 'pendiente' %}
 
 <a href="{% url 'servicios:aceptar_profesional' item.aplicacion.id %}"
-
 class="inline-block mt-4 bg-beige text-blacksoft px-4 py-2 rounded-lg font-semibold hover:bg-beigdark transition">
 
 Aceptar profesional

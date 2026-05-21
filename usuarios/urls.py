@@ -44,4 +44,5 @@ urlpatterns += [
     path('admin-panel/reportes/crear/',           views_admin.admin_crear_reporte,   name='admin_crear_reporte'),
     path('admin-panel/reportes/<int:reporte_id>/',views_admin.admin_reporte_detalle, name='admin_reporte_detalle'),
     path('admin-panel/reportes/<int:reporte_id>/eliminar/', views_admin.admin_eliminar_reporte, name='admin_eliminar_reporte'),
+    path('admin-panel/reportes/<int:reporte_id>/pdf/', views_admin.admin_descargar_reporte_pdf, name='admin_descargar_reporte_pdf'),
 ]

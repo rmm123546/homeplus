@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Perfil Profesional | Home+</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+tailwind.config = {
+theme:{
+extend:{
+colors:{
+beige:"#CCB58E",
+beigdark:"#B89D71",
+blacksoft:"#1F1F1F"
+}
+}
+}
+}
+</script>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+<style>
+
+.card{
+transition:0.3s;
+}
+.card:hover{
+transform:translateY(-6px) scale(1.02);
+box-shadow:0 15px 40px rgba(0,0,0,0.5);
+}
+
+.btn-pro{
+background:#CCB58E;
+color:#1F1F1F;
+padding:10px 16px;
+border-radius:12px;
+font-weight:600;
+transition:0.3s;
+}
+.btn-pro:hover{
+background:#B89D71;
+transform:scale(1.02);
+}
+
+/* IMÁGENES */
+.img-hover{
+transition:0.3s;
+}
+.img-hover:hover{
+transform:scale(1.05);
+}
+
+</style>
+
+</head>
+
+<body class="bg-blacksoft text-white">
+
+<!-- HEADER SUPERIOR -->
+<div class="flex justify-between items-center px-10 py-6 border-b border-white/10">
+
+<a href="javascript:history.back()"
+class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg border border-white/10 text-sm flex items-center gap-2">
+<i class="fas fa-arrow-left"></i>
+Volver
+</a>
+
+</div>
+
+<!-- CONTENIDO -->
+<div class="max-w-5xl mx-auto p-10">
+
+<!-- HEADER PERFIL -->
+<div class="flex justify-between items-center mb-10">
+
+<div>
+<h1 class="text-3xl font-bold">
+{{ usuario.nombre }} {{ usuario.apellido }}
+</h1>
+
+<p class="text-gray-400 mt-1">
+{{ perfil.get_servicio_display }}
+</p>
+</div>
+
+<div class="text-right">
+<p class="text-beige text-2xl font-semibold">
+⭐ {{ promedio|floatformat:1|default:"Sin calificaciones" }}
+</p>
+<p class="text-xs text-gray-400">
+{{ calificaciones.count }} reseñas
+</p>
+</div>
+
+</div>
+
+<!-- INFO -->
+<div class="grid md:grid-cols-2 gap-6 mb-12">
+
+<div class="card bg-white/5 p-6 rounded-2xl border border-white/10">
+<h3 class="font-bold mb-3 flex items-center gap-2">
+<i class="fas fa-info-circle text-beige"></i>
+Descripción
+</h3>
+
+<p class="text-gray-400 text-sm leading-relaxed">
+{{ perfil.servicio_descripcion }}
+</p>
+</div>
+
+<div class="card bg-white/5 p-6 rounded-2xl border border-white/10">
+<h3 class="font-bold mb-3 flex items-center gap-2">
+<i class="fas fa-briefcase text-beige"></i>
+Experiencia
+</h3>
+
+<p class="text-gray-400 text-sm leading-relaxed">
+{{ perfil.historial }}
+</p>
+</div>
+
+<div class="card bg-white/5 p-6 rounded-2xl border border-white/10 md:col-span-2">
+<h3 class="font-bold mb-3 flex items-center gap-2">
+<i class="fas fa-certificate text-beige"></i>
+Certificaciones
+</h3>
+
+<p class="text-gray-400 text-sm leading-relaxed">
+{{ perfil.certificaciones|default:"No registra certificaciones" }}
+</p>
+</div>
+<!-- DISPONIBILIDAD -->
+<div class="card bg-white/5 p-6 rounded-2xl border border-white/10 md:col-span-2 mt-4">
+
+<h3 class="font-bold mb-3 flex items-center gap-2">
+<i class="fas fa-calendar-check text-beige"></i>
+Disponibilidad
+</h3>
+
+<div class="grid md:grid-cols-2 gap-4">
+
+{% for d in disponibilidades %}
+<div class="bg-white/5 p-3 rounded-lg border border-white/10">
+    <p class="font-semibold text-beige">{{ d.dia }}</p>
+    <p class="text-sm text-gray-400">
+        {{ d.hora_inicio }} - {{ d.hora_fin }}
+    </p>
+</div>
+{% empty %}
+<p class="text-gray-400">
+Este profesional no ha registrado disponibilidad.
+</p>
+{% endfor %}
+
+</div>
+
+</div>
+</div>
+
+<!-- GALERÍA DE TRABAJOS -->
+<h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+<i class="fas fa-image text-beige"></i>
+Trabajos realizados
+</h2>
+
+<div class="grid md:grid-cols-3 gap-4 mb-12">
+
+{% for img in evidencias %}
+<div class="card relative overflow-hidden rounded-xl border border-white/10 group">
+
+<img src="{{ img.archivo.url }}"
+class="w-full h-40 object-cover group-hover:scale-110 transition duration-300">
+
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+<i class="fas fa-search text-white text-xl"></i>
+</div>
+
+</div>
+{% empty %}
+<p class="text-gray-400">
+Este profesional aún no ha subido trabajos.
+</p>
+{% endfor %}
+
+</div>
+
+<!-- RESEÑAS -->
+<h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+<i class="fas fa-star text-beige"></i>
+Reseñas
+</h2>
+
+<div class="space-y-4">
+
+{% for c in calificaciones %}
+<div class="card bg-white/5 p-5 rounded-xl border border-white/10">
+
+<div class="flex justify-between items-center mb-2">
+<p class="font-semibold text-sm">
+{{ c.cliente.nombre }}
+</p>
+
+<p class="text-beige font-semibold">
+⭐ {{ c.puntuacion }}
+</p>
+</div>
+
+<p class="text-sm text-gray-400 leading-relaxed">
+{{ c.comentario|default:"Sin comentario" }}
+</p>
+
+</div>
+{% empty %}
+<p class="text-gray-400">
+Este profesional aún no tiene reseñas.
+</p>
+{% endfor %}
+
+</div>
+
+</div>
+
+</body>
+</html>

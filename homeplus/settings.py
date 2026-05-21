@@ -61,10 +61,10 @@ WSGI_APPLICATION = 'homeplus.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'homejd',
+        'NAME': 'homeplus',
         'USER': 'root',
         'PASSWORD': '1234',
-        'HOST': 'localhost',
+        'HOST': '127.0.0.1',
         'PORT': '3307',
         'OPTIONS': {
             'charset': 'utf8mb4',
@@ -162,3 +162,4 @@ USE_TZ = True
 # DEFAULT AUTO FIELD
 # ─────────────────────────────────────────
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+LOGIN_URL = '/usuarios/login/'

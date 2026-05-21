@@ -99,9 +99,12 @@
         document.getElementById('tipo_usuario_hidden').value = tipo;
         document.getElementById('tab-cliente').classList.toggle('active', tipo === 'cliente');
         document.getElementById('tab-profesional').classList.toggle('active', tipo === 'profesional');
+
         // Cambiar texto del botón
         const btn = document.getElementById('btnRegistro');
-        btn.textContent = tipo === 'profesional' ? 'Continuar → Perfil profesional' : 'Crear cuenta';
+        btn.textContent = tipo === 'profesional'
+            ? 'Continuar → Perfil profesional'
+            : 'Crear cuenta';
     }
 
     // Mantener estado del tab si hay errores de validación
@@ -114,5 +117,37 @@
             e.preventDefault();
         });
     });
+
+    // ===== VALIDACIONES =====
+
+    // Nombre y apellido: NO permitir números
+    const nombreInput = document.getElementById('id_nombre');
+    const apellidoInput = document.getElementById('id_apellido');
+
+    function soloLetras(input) {
+        input.addEventListener('input', function () {
+            this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+        });
+    }
+
+    if (nombreInput) soloLetras(nombreInput);
+    if (apellidoInput) soloLetras(apellidoInput);
+
+    // Teléfono: solo números y máximo 10 dígitos
+    const telefonoInput = document.getElementById('id_telefono');
+
+    if (telefonoInput) {
+        telefonoInput.setAttribute('maxlength', '10');
+
+        telefonoInput.addEventListener('input', function () {
+            // Solo números
+            this.value = this.value.replace(/\D/g, '');
+
+            // Limitar a 10 dígitos
+            if (this.value.length > 10) {
+                this.value = this.value.slice(0, 10);
+            }
+        });
+    }
 </script>
 {% endblock %}

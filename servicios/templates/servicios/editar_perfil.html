@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Editar Perfil | Home+</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+tailwind.config = {
+theme:{
+extend:{
+colors:{
+beige:"#CCB58E",
+beigdark:"#B89D71",
+blacksoft:"#1F1F1F"
+}
+}
+}
+}
+</script>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+<style>
+
+.btn-pro{
+background:#CCB58E;
+color:#1F1F1F;
+padding:14px;
+border-radius:14px;
+font-weight:600;
+transition:0.3s;
+}
+.btn-pro:hover{
+background:#B89D71;
+transform:scale(1.02);
+}
+
+.btn-cancel{
+background:transparent;
+border:1px solid rgba(255,255,255,0.2);
+padding:14px;
+border-radius:14px;
+transition:0.3s;
+}
+.btn-cancel:hover{
+background:rgba(255,255,255,0.05);
+}
+
+.card{
+transition:0.3s;
+}
+.card:hover{
+transform:scale(1.03);
+}
+
+</style>
+
+</head>
+
+<body class="bg-blacksoft text-white">
+
+<div class="grid md:grid-cols-2 min-h-screen">
+
+<!-- FORMULARIO -->
+<div class="p-10 border-r border-white/10">
+
+<h2 class="text-2xl font-bold mb-6">Editar perfil</h2>
+
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+
+<label class="text-sm text-gray-400">Descripción</label>
+<textarea name="descripcion" id="desc"
+class="w-full p-4 bg-black/50 rounded mt-2 mb-4 border border-white/10">{{ perfil.servicio_descripcion }}</textarea>
+
+<label class="text-sm text-gray-400">Experiencia</label>
+<textarea name="historial" id="hist"
+class="w-full p-4 bg-black/50 rounded mt-2 mb-4 border border-white/10">{{ perfil.historial }}</textarea>
+
+<label class="text-sm text-gray-400">Certificaciones</label>
+<textarea name="certificaciones"
+class="w-full p-4 bg-black/50 rounded mt-2 mb-4 border border-white/10">{{ perfil.certificaciones }}</textarea>
+
+<label class="text-sm text-gray-400">Subir imágenes</label>
+<input type="file" name="imagenes" multiple
+class="w-full mt-2 mb-6">
+
+<!-- BOTONES -->
+<div class="flex gap-4">
+
+<button type="submit" class="btn-pro w-full">
+Guardar cambios
+</button>
+
+<a href="{% url 'servicios:dashboard_profesional' %}" class="btn-cancel w-full text-center">
+Cancelar
+</a>
+
+</div>
+
+</form>
+
+<!-- 🔥 IMÁGENES ACTUALES -->
+<h3 class="text-lg mt-10 mb-4 text-gray-300">Imágenes actuales</h3>
+
+<div class="grid grid-cols-3 gap-3">
+
+{% for e in evidencias %}
+{% if e.archivo %}
+<div class="card overflow-hidden rounded-xl border border-white/10">
+<img src="{{ e.archivo.url }}" class="w-full h-24 object-cover">
+</div>
+{% endif %}
+{% empty %}
+<p class="text-gray-400 text-sm">No hay imágenes aún.</p>
+{% endfor %}
+
+</div>
+
+</div>
+
+<!-- PREVIEW -->
+<div class="p-10 overflow-y-auto">
+
+<h2 class="text-xl mb-6 text-gray-400">
+Vista previa (así lo ve el cliente)
+</h2>
+
+<!-- HEADER -->
+<h1 class="text-2xl font-bold mb-2">
+{{ usuario.nombre }} {{ usuario.apellido }}
+</h1>
+
+<p class="text-gray-400 mb-6">
+{{ perfil.get_servicio_display }}
+</p>
+
+<!-- DESCRIPCIÓN -->
+<div class="bg-white/5 p-6 rounded-xl mb-4">
+<h3 class="text-beige mb-2">Descripción</h3>
+<p id="preview-desc">{{ perfil.servicio_descripcion }}</p>
+</div>
+
+<!-- EXPERIENCIA -->
+<div class="bg-white/5 p-6 rounded-xl mb-4">
+<h3 class="text-beige mb-2">Experiencia</h3>
+<p id="preview-hist">{{ perfil.historial }}</p>
+</div>
+
+<!-- CERTIFICACIONES -->
+<div class="bg-white/5 p-6 rounded-xl mb-4">
+<h3 class="text-beige mb-2">Certificaciones</h3>
+<p id="preview-cert">{{ perfil.certificaciones }}</p>
+</div>
+
+<!-- PORTAFOLIO -->
+<h3 class="text-xl mt-6 mb-4">Portafolio</h3>
+
+<div class="grid grid-cols-3 gap-3">
+
+{% for e in evidencias %}
+{% if e.archivo %}
+<div class="card overflow-hidden rounded-xl border border-white/10">
+<img src="{{ e.archivo.url }}" class="w-full h-28 object-cover">
+</div>
+{% endif %}
+{% endfor %}
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+// 🔥 LIVE PREVIEW
+document.getElementById("desc").addEventListener("input", function(){
+document.getElementById("preview-desc").innerText = this.value
+})
+
+document.getElementById("hist").addEventListener("input", function(){
+document.getElementById("preview-hist").innerText = this.value
+})
+
+document.getElementById("preview-cert").innerText = document.querySelector('[name="certificaciones"]').value
+
+document.querySelector('[name="certificaciones"]').addEventListener("input", function(){
+document.getElementById("preview-cert").innerText = this.value
+})
+
+</script>
+
+</body>
+</html>

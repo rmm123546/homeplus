@@ -31,13 +31,21 @@ urlpatterns = [
     path("dashboard/", views.dashboard, name="dashboard"),
     path("carga-masiva/", views.carga_masiva, name="carga_masiva"),
 
-    path('logout/', views.cerrar_sesion, name='logout'),
+    path('logout/', views.cerrar_sesion, name='logout'),\
+    path('profesional/<int:id>/', views.ver_perfil_profesional, name='ver_perfil'),
+    path('editar-perfil/', views.editar_perfil, name='editar_perfil'),
+    path(
+    'cancelar-postulacion/<int:id>/',
+    views.cancelar_postulacion,
+    name='cancelar_postulacion'
+), 
 
-
-
-
-
-
+path("disponibilidad/crear/", views.crear_disponibilidad, name="crear_disponibilidad"),
+path(
+        "guardar-descripcion/<int:id>/",
+        views.guardar_descripcion_trabajo,
+        name="guardar_descripcion_trabajo"
+    ),
 
 
 

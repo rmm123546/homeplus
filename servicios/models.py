@@ -3,6 +3,7 @@ from django.shortcuts import redirect
 from usuarios.models import Usuario
 
 
+
 class Servicio(models.Model):
 
     CATEGORIA_CHOICES = [
@@ -40,7 +41,8 @@ class Servicio(models.Model):
     ciudad = models.CharField(max_length=100)
     direccion = models.CharField(max_length=255)
     referencia = models.TextField(blank=True, null=True)
-
+    barrio = models.CharField(max_length=100)
+    localidad = models.CharField(max_length=100)
     urgencia = models.CharField(max_length=10, choices=URGENCIA_CHOICES)
 
     # 🔥 ESTADO AUTOMÁTICO
@@ -111,12 +113,21 @@ class Aplicacion(models.Model):
 
     fecha = models.DateTimeField(auto_now_add=True)
 
+    # 🔥 AQUÍ VA TU NUEVO CAMPO
+    descripcion_trabajo = models.TextField(
+        blank=True,
+        null=True
+    )
+
     def __str__(self):
         return f"{self.profesional.nombre} → {self.servicio.titulo}"
-
-
 class Evidencia(models.Model):
-    servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE)
+    servicio = models.ForeignKey(
+    Servicio,
+    on_delete=models.CASCADE,
+    null=True,
+    blank=True
+)
     archivo = models.FileField(upload_to='evidencias/')
     fecha = models.DateTimeField(auto_now_add=True)
 
@@ -229,3 +240,9 @@ class Reprogramacion(models.Model):
     )
 
     fecha_creacion = models.DateTimeField(auto_now_add=True)
+    
+class Disponibilidad(models.Model):
+    profesional = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    dia = models.CharField(max_length=20)
+    hora_inicio = models.TimeField()
+    hora_fin = models.TimeField()

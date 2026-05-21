@@ -28,153 +28,372 @@ blacksoft:"#1F1F1F"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
 <style>
-.card{transition:0.3s;}
-.card:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(0,0,0,0.4);}
-.fade{animation:fade .4s ease;}
-@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.modal{display:none;}
+
+.section{display:none;}
+.section.active{display:block;}
+
+.card{
+transition:0.3s;
+}
+.card:hover{
+transform:translateY(-6px) scale(1.02);
+box-shadow:0 15px 40px rgba(0,0,0,0.5);
+}
+
+.nav-btn{
+display:flex;
+align-items:center;
+gap:12px;
+padding:12px;
+border-radius:12px;
+transition:0.3s;
+width:100%;
+font-weight:500;
+}
+
+.nav-btn:hover{
+background:rgba(255,255,255,0.05);
+color:#CCB58E;
+}
+
+.nav-active{
+background:rgba(255,255,255,0.08);
+color:#CCB58E;
+}
+
+.btn-pro{
+background:#CCB58E;
+color:#1F1F1F;
+padding:14px;
+border-radius:14px;
+font-weight:600;
+transition:0.3s;
+}
+.btn-pro:hover{
+background:#B89D71;
+transform:scale(1.02);
+}
+
+.portfolio-img{
+height:160px;
+width:100%;
+object-fit:cover;
+transition:0.3s;
+}
+.portfolio-img:hover{
+transform:scale(1.05);
+}
+
 </style>
 
 </head>
 
 <body class="bg-blacksoft text-white">
-    <p style="color:red;">TOTAL: {{ servicios|length }}</p>
 
 <!-- SIDEBAR -->
-<aside class="fixed left-0 top-0 h-screen w-64 bg-black/80 backdrop-blur-xl border-r border-white/10 p-6">
+<aside class="fixed left-0 top-0 h-screen w-64 bg-black/80 backdrop-blur-xl border-r border-white/10 p-6 flex flex-col justify-between">
 
+<div>
 <div class="text-2xl font-extrabold mb-10">
 Home<span class="text-beige">+</span>
 </div>
 
-<nav class="space-y-4 text-sm">
+<nav class="space-y-3 text-sm">
 
-<button onclick="showSection('dashboard')" class="flex items-center gap-3 hover:text-beige">
+<button onclick="showSection('dashboard', this)" class="nav-btn nav-active">
 <i class="fas fa-chart-line"></i> Dashboard
 </button>
 
-<button onclick="showSection('servicios')" class="flex items-center gap-3 hover:text-beige">
+<button onclick="showSection('servicios', this)" class="nav-btn">
 <i class="fas fa-briefcase"></i> Servicios disponibles
 </button>
 
-<button onclick="showSection('perfil')" class="flex items-center gap-3 hover:text-beige">
-
-<i class="fas fa-user"></i> Perfil
-
+<button onclick="showSection('aplicados', this)" class="nav-btn">
+<i class="fas fa-paper-plane"></i> Servicios aplicados
 </button>
 
-<a href="{% url 'usuarios:logout' %}" class="flex items-center gap-3 text-red-400 mt-10">
-<i class="fas fa-sign-out-alt"></i> Cerrar sesión
-</a>
+<button onclick="showSection('proceso', this)" class="nav-btn">
+<i class="fas fa-tasks"></i> En proceso
+</button>
 
+<button onclick="showSection('perfil', this)" class="nav-btn">
+<i class="fas fa-user"></i> Mi perfil
+</button>
+<button onclick="showSection('disponibilidad', this)" class="nav-btn">
+<i class="fas fa-calendar-check"></i> Disponibilidad
+</button>
 </nav>
-</aside>
-
-<!-- MAIN -->
-<main class="ml-64 p-10">
-
-<!-- TOPBAR -->
-<div class="flex justify-end items-center gap-6 mb-10">
-
-<div class="text-right">
-<p class="font-semibold">
-Bienvenido {{ usuario.nombre }} {{ usuario.apellido }}
-</p>
-
-<p class="text-xs text-gray-400">
-{{ perfil.get_servicio_display }}
-</p>
 </div>
 
-<div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
+<div>
+<a href="{% url 'usuarios:logout' %}" class="nav-btn text-red-400 hover:text-red-300">
+<i class="fas fa-sign-out-alt"></i> Cerrar sesión
+</a>
+</div>
+
+</aside>
+
+<main class="ml-64 p-10">
+
+<!-- HEADER -->
+<div class="flex justify-between items-center mb-10">
+
+<h1 class="text-xl font-semibold text-gray-300">
+Panel del profesional
+</h1>
+
+<div class="flex items-center gap-4">
+
+<div class="text-right">
+<p class="font-semibold">{{ usuario.nombre }}</p>
+<p class="text-xs text-gray-400">{{ perfil.get_servicio_display }}</p>
+</div>
+
+<div class="w-11 h-11 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
 <i class="fas fa-user text-gray-300"></i>
 </div>
 
 </div>
 
-<!-- DASHBOARD -->
-<section id="dashboard" class="section fade">
+</div>
 
-<h1 class="text-3xl font-bold mb-10">Panel Profesional</h1>
+<!-- DASHBOARD -->
+<section id="dashboard" class="section active">
+
+<h1 class="text-3xl font-bold mb-10">Panel</h1>
 
 <div class="grid md:grid-cols-3 gap-6">
 
 <div onclick="showSection('servicios')" class="card bg-white/5 p-8 rounded-2xl border border-white/10 cursor-pointer">
 <i class="fas fa-briefcase text-beige text-2xl mb-4"></i>
 <h3 class="font-bold mb-2">Servicios disponibles</h3>
-<p class="text-sm text-gray-400">Explora solicitudes.</p>
+<p class="text-sm text-gray-400">
+Explora solicitudes disponibles y postúlate.
+</p>
+</div>
+<div onclick="showSection('aplicados')" class="card bg-white/5 p-8 rounded-2xl border border-white/10 cursor-pointer">
+<i class="fas fa-tasks text-beige text-2xl mb-4"></i>
+<h3 class="font-bold mb-2">Servicios aplicados</h3>
+<p class="text-sm text-gray-400">
+Servicios a los que aplicaste.
+</p>
+</div>
+<div onclick="showSection('proceso')" class="card bg-white/5 p-8 rounded-2xl border border-white/10 cursor-pointer">
+<i class="fas fa-paper-plane text-beige text-2xl mb-4"></i>
+<h3 class="font-bold mb-2">Servicios en proceso</h3>
+<p class="text-sm text-gray-400">
+Servicios que tienes en proceso.
+</p>
 </div>
 
 <div onclick="showSection('perfil')" class="card bg-white/5 p-8 rounded-2xl border border-white/10 cursor-pointer">
 <i class="fas fa-user text-beige text-2xl mb-4"></i>
 <h3 class="font-bold mb-2">Mi perfil</h3>
-<p class="text-sm text-gray-400">Ver información profesional.</p>
+<p class="text-sm text-gray-400">
+Visualiza cómo te ven los clientes.
+</p>
 </div>
 
 </div>
 
 </section>
 
-<!-- SERVICIOS DINÁMICOS -->
-<section id="servicios" class="section hidden fade">
-    <p style="color:red;">
-TOTAL: {{ servicios|length }}
-</p>
+<!-- SERVICIOS -->
+<section id="servicios" class="section">
 
-<h1 class="text-3xl font-bold mb-10">Servicios disponibles</h1>
+<h1 class="text-3xl mb-8">Servicios disponibles</h1>
 
-<div class="grid md:grid-cols-3 gap-8">
+<div class="grid md:grid-cols-3 gap-6">
 
 {% for servicio in servicios %}
-<div class="card bg-white/5 rounded-2xl border border-white/10 overflow-hidden">
+<div class="card bg-white/5 p-4 rounded-xl border border-white/10">
 
 {% if servicio.imagen %}
-<img src="{{ servicio.imagen.url }}" class="h-40 w-full object-cover">
+<img src="{{ servicio.imagen.url }}" class="h-40 w-full object-cover mb-3 rounded">
 {% else %}
-<img src="{% static 'img/default.jpg' %}" class="h-40 w-full object-cover">
+<img src="{% static 'img/default.jpg' %}" class="h-40 w-full object-cover mb-3 rounded">
 {% endif %}
 
-<div class="p-6">
+<h3 class="font-bold">{{ servicio.titulo }}</h3>
 
-<h3 class="font-bold mb-2">{{ servicio.titulo }}</h3>
-<div class="mt-3">
+<p class="text-xs text-gray-400 mb-1">
+<i class="fas fa-user mr-1"></i>
+{{ servicio.cliente.nombre }} {{ servicio.cliente.apellido }}
+</p>
 
-{% if servicio.estado == 'publicado' %}
-<span class="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-xs">
-Pendiente
-</span>
+<p class="text-xs text-gray-400 mb-1">
+<i class="fas fa-city mr-1"></i>
+{{ servicio.ciudad }}
+</p>
 
-{% elif servicio.estado == 'proceso' %}
-<span class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-xs">
-En proceso
-</span>
+<p class="text-xs text-gray-400 mb-2">
+<i class="fas fa-home mr-1"></i>
+{{ servicio.direccion }}
+</p>
 
-{% elif servicio.estado == 'finalizado' %}
-<span class="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-semibold">
-✔ Terminado
-</span>
+<p class="text-xs text-gray-400 mb-2">
+{{ servicio.get_categoria_display }} |
+{{ servicio.get_urgencia_display }}
+</p>
 
-{% endif %}
-
-</div>
-
-{% if servicio.estado != 'finalizado' %}
 <p class="text-sm text-gray-400 mb-4">
-{{ servicio.descripcion|truncatechars:60 }}
+{{ servicio.descripcion|truncatechars:80 }}
 </p>
 
 <a href="{% url 'servicios:detalle' servicio.id_servicio %}"
-   class="bg-beige text-blacksoft px-4 py-2 rounded-lg text-sm inline-block">
-   Ver detalles
+class="bg-beige text-blacksoft px-3 py-1 rounded text-xs font-semibold hover:bg-beigdark transition">
+Ver detalles
 </a>
 
+</div>
+{% endfor %}
+
+</div>
+
+</section>
+
+<section id="aplicados" class="section">
+
+<h1 class="text-3xl mb-8">Servicios aplicados</h1>
+
+<div class="grid md:grid-cols-3 gap-6">
+
+{% for a in aplicaciones %}
+{% if a.estado != "aceptado" %}
+<div class="card bg-white/5 p-4 rounded-xl border border-white/10">
+
+{% if a.servicio.imagen %}
+<img src="{{ a.servicio.imagen.url }}" class="h-40 w-full object-cover mb-3 rounded">
+{% else %}
+<img src="{% static 'img/default.jpg' %}" class="h-40 w-full object-cover mb-3 rounded">
 {% endif %}
 
+<h3 class="font-bold">{{ a.servicio.titulo }}</h3>
+<p class="text-xs text-gray-400 mb-1">
+<i class="fas fa-user mr-1"></i>
+{{ a.servicio.cliente.nombre }} {{ a.servicio.cliente.apellido }}
+</p>
+
+<p class="text-xs text-gray-400 mb-1">
+<i class="fas fa-city mr-1"></i>
+{{ a.servicio.ciudad }}
+</p>
+
+<p class="text-xs text-gray-400 mb-2">
+<i class="fas fa-home mr-1"></i>
+{{ a.servicio.direccion }}
+</p>
+<p class="text-xs text-gray-400 mb-2">
+Estado: {{ a.estado }}
+</p>
+
+<p class="text-sm text-gray-400 mb-4">
+{{ a.servicio.descripcion|truncatechars:80 }}
+</p>
+
+<a href="{% url 'servicios:cancelar_postulacion' a.id %}"
+class="bg-red-400 text-blacksoft px-3 py-1 rounded text-xs font-semibold hover:bg-red-500 transition">
+Cancelar postulación
+</a>
+
+</div>
+{% endif %}
+{% empty %}
+<p class="text-gray-400">No te has postulado a servicios.</p>
+{% endfor %}
+
+</div>
+
+</section>
+
+<section id="proceso" class="section">
+
+<h1 class="text-3xl mb-8">Servicios en proceso</h1>
+
+<div class="grid md:grid-cols-3 gap-6">
+
+{% for a in aplicaciones %}
+{% if a.estado == "aceptado" %}
+<div class="card bg-white/5 p-4 rounded-xl border border-white/10">
+
+{% if a.servicio.imagen %}
+<img src="{{ a.servicio.imagen.url }}" class="h-40 w-full object-cover mb-3 rounded">
+{% else %}
+<img src="{% static 'img/default.jpg' %}" class="h-40 w-full object-cover mb-3 rounded">
+{% endif %}
+
+<h3 class="font-bold">{{ a.servicio.titulo }}</h3>
+<p class="text-xs text-gray-400 mb-1">
+<i class="fas fa-user mr-1"></i>
+{{ a.servicio.cliente.nombre }} {{ a.servicio.cliente.apellido }}
+</p>
+
+<p class="text-xs text-gray-400 mb-1">
+<i class="fas fa-city mr-1"></i>
+{{ a.servicio.ciudad }}
+</p>
+
+<p class="text-xs text-gray-400 mb-2">
+<i class="fas fa-home mr-1"></i>
+{{ a.servicio.direccion }}
+</p>
+<p class="text-xs text-green-400 mb-2">
+Servicio en ejecución
+</p>
+
+<!-- 🔹 DESCRIPCIÓN DEL CLIENTE -->
+<p class="text-xs text-gray-400 mt-3">
+Descripción del cliente:
+</p>
+
+<p class="text-sm text-gray-400 mb-4">
+{{ a.servicio.descripcion|truncatechars:80 }}
+</p>
+
+<!-- 🔹 FORMULARIO -->
+<form method="POST" action="{% url 'servicios:guardar_descripcion_trabajo' a.id %}">
+{% csrf_token %}
+
+<label class="text-sm text-beige font-semibold">
+Describe detalladamente el trabajo que vas a realizar:
+</label>
+
+<p class="text-xs text-gray-400 mb-2">
+Explica paso a paso qué vas a hacer, qué incluye el servicio, materiales si aplica, tiempos estimados y cualquier detalle importante para el cliente.
+</p>
+
+<textarea name="descripcion_trabajo"
+rows="6"
+class="w-full p-3 rounded-lg bg-blacksoft border border-white/10 text-sm mb-3 mt-1 focus:outline-none focus:border-beige resize-none"
+placeholder="Ejemplo:
+• Diagnóstico inicial del problema
+• Reparación o instalación
+• Materiales que se utilizarán
+• Tiempo estimado del trabajo
+• Pruebas finales para verificar funcionamiento correcto
+
+Entre más claro seas, mejor experiencia tendrá el cliente."
+>{{ a.descripcion_trabajo|default_if_none:"" }}</textarea>
+<button class="btn-pro w-full text-sm">
+Guardar descripción
+</button>
+
+</form>
+
+<div class="mt-3 bg-black/30 p-3 rounded-lg border border-white/10">
+    <p class="text-xs text-gray-400 mb-1">
+        Tu descripción:
+    </p>
+
+    <p class="text-sm text-beige">
+        🛠 {{ a.descripcion_trabajo|default:"Aún no has descrito este trabajo." }}
+    </p>
 </div>
 
 </div>
+{% endif %}
 {% empty %}
-<p>No hay servicios disponibles</p>
+<p class="text-gray-400">No tienes servicios en proceso.</p>
 {% endfor %}
 
 </div>
@@ -182,104 +401,195 @@ En proceso
 </section>
 
 <!-- PERFIL -->
-<section id="perfil" class="section hidden fade">
+<section id="perfil" class="section">
 
-<h1 class="text-3xl font-bold mb-10">Perfil profesional</h1>
+<h1 class="text-3xl font-bold mb-10">Mi perfil (vista cliente)</h1>
 
-<div class="bg-white/5 p-8 rounded-2xl border border-white/10 max-w-xl">
+<div class="max-w-5xl mx-auto">
 
-<label class="text-sm text-gray-400">Nombre</label>
-<input class="w-full mt-1 bg-black/40 p-3 rounded-lg border border-white/10 mb-6"
-value="{{ usuario.nombre }} {{ usuario.apellido }}" readonly>
+<!-- HEADER PERFIL -->
+<div class="flex justify-between items-center mb-10">
 
-<label class="text-sm text-gray-400">Especialidad</label>
-<input class="w-full mt-1 bg-black/40 p-3 rounded-lg border border-white/10 mb-6"
-value="{{ perfil.get_servicio_display }}" readonly>
+<div>
+<h1 class="text-3xl font-bold">
+{{ usuario.nombre }} {{ usuario.apellido }}
+</h1>
 
-<label class="text-sm text-gray-400">Experiencia</label>
-<textarea class="w-full mt-1 bg-black/40 p-3 rounded-lg border border-white/10" readonly>
-{{ perfil.historial }}
-</textarea>
-<p class="text-yellow-400 text-sm">
+<p class="text-gray-400 mt-1">
+{{ perfil.get_servicio_display }}
+</p>
+</div>
+
+<div class="text-right">
+<p class="text-beige text-2xl font-semibold">
 ⭐ {{ promedio|floatformat:1|default:"Sin calificaciones" }}
 </p>
+</div>
 
+</div>
+
+<!-- INFO -->
+<div class="grid md:grid-cols-2 gap-6 mb-12">
+
+<div class="card bg-white/5 p-6 rounded-2xl border border-white/10">
+<h3 class="font-bold mb-3">Descripción</h3>
+<p class="text-gray-400 text-sm">
+{{ perfil.servicio_descripcion }}
+</p>
+</div>
+
+<div class="card bg-white/5 p-6 rounded-2xl border border-white/10">
+<h3 class="font-bold mb-3">Experiencia</h3>
+<p class="text-gray-400 text-sm">
+{{ perfil.historial }}
+</p>
+</div>
+
+<div class="card bg-white/5 p-6 rounded-2xl border border-white/10 md:col-span-2">
+<h3 class="font-bold mb-3">Certificaciones</h3>
+<p class="text-gray-400 text-sm">
+{{ perfil.certificaciones|default:"No registra certificaciones" }}
+</p>
+</div>
+
+</div>
+
+<!-- PORTAFOLIO -->
+<h2 class="text-2xl font-bold mb-6">Portafolio</h2>
+
+<div class="grid md:grid-cols-3 gap-4 mb-10">
+
+{% if evidencias %}
+    {% for e in evidencias %}
+    {% if e.archivo %}
+    <div class="card overflow-hidden rounded-xl border border-white/10">
+        <img src="{{ e.archivo.url }}" class="portfolio-img">
+    </div>
+    {% endif %}
+    {% endfor %}
+{% else %}
+<p class="text-gray-400">No hay imágenes aún.</p>
+{% endif %}
+
+</div>
+<!-- DISPONIBILIDAD -->
+<div class="card bg-white/5 p-6 rounded-2xl border border-white/10 md:col-span-2 mt-4">
+
+<h3 class="font-bold mb-3 flex items-center gap-2">
+<i class="fas fa-calendar-check text-beige"></i>
+Disponibilidad
+</h3>
+
+<div class="grid md:grid-cols-2 gap-4">
+
+{% for d in disponibilidades %}
+<div class="bg-white/5 p-3 rounded-lg border border-white/10">
+    <p class="font-semibold text-beige">{{ d.dia }}</p>
+    <p class="text-sm text-gray-400">
+        {{ d.hora_inicio }} - {{ d.hora_fin }}
+    </p>
+</div>
+{% empty %}
+<p class="text-gray-400">
+Este profesional no ha registrado disponibilidad.
+</p>
+{% endfor %}
+
+</div>
+
+</div>
+<!-- BOTÓN EDITAR -->
+<a href="{% url 'servicios:editar_perfil' %}"
+class="btn-pro block text-center">
+Editar perfil
+</a>
 
 </div>
 
 </section>
+<section id="disponibilidad" class="section">
 
+<h1 class="text-3xl mb-8">Mi disponibilidad</h1>
+
+<div class="grid md:grid-cols-2 gap-6">
+    <div class="bg-white/5 p-6 rounded-2xl border border-white/10">
+
+<h3 class="font-bold mb-4">Agregar horario</h3>
+
+<form method="POST" action="{% url 'servicios:crear_disponibilidad' %}" class="space-y-4">
+
+{% csrf_token %}
+
+<label>Día</label>
+<select name="dia" class="w-full p-2 rounded bg-blacksoft border border-white/10">
+    <option>Lunes</option>
+    <option>Martes</option>
+    <option>Miércoles</option>
+    <option>Jueves</option>
+    <option>Viernes</option>
+    <option>Sábado</option>
+    <option>Domingo</option>
+</select>
+
+<label>Hora inicio</label>
+<input type="time" name="hora_inicio" class="w-full p-2 rounded bg-blacksoft border border-white/10">
+
+<label>Hora fin</label>
+<input type="time" name="hora_fin" class="w-full p-2 rounded bg-blacksoft border border-white/10">
+
+<button class="btn-pro w-full">Guardar</button>
+
+</form>
+
+</div>
+
+<div class="bg-white/5 p-6 rounded-2xl border border-white/10">
+
+<h3 class="font-bold mb-4">Horarios actuales</h3>
+
+{% for d in disponibilidades %}
+<div class="p-3 mb-3 rounded bg-white/5 border border-white/10">
+    <p class="font-semibold">{{ d.dia }}</p>
+    <p class="text-sm text-gray-400">
+        {{ d.hora_inicio }} - {{ d.hora_fin }}
+    </p>
+</div>
+{% empty %}
+<p class="text-gray-400">No tienes disponibilidad registrada.</p>
+{% endfor %}
+
+</div>
+
+</div>
+</section>
 </main>
+
 <script>
 
-function showSection(id){
-    document.querySelectorAll(".section").forEach(sec=>{
-        sec.classList.add("hidden")
-    })
-    document.getElementById(id).classList.remove("hidden")
+function guardarSeccion(seccion){
+localStorage.setItem("seccionActiva", seccion)
 }
 
-// 🔥 MOSTRAR SERVICIOS AUTOMÁTICAMENTE
-window.onload = function() {
-    showSection('servicios')
+function showSection(id, btn){
+guardarSeccion(id)
+
+document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"))
+document.getElementById(id).classList.add("active")
+
+document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("nav-active"))
+if(btn) btn.classList.add("nav-active")
+}
+
+window.onload = function(){
+
+let seccion = localStorage.getItem("seccionActiva") || "dashboard"
+
+document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"))
+document.getElementById(seccion).classList.add("active")
+
 }
 
 </script>
 
-<script>
-function showSection
-{% if visita.estado == 'pendiente' %}
-
-<p>Fecha propuesta: {{ visita.fecha_propuesta }}</p>
-
-<form method="POST">
-{% csrf_token %}
-{% if visita.estado == 'pendiente' %}
-
-<p>Fecha propuesta: {{ visita.fecha_propuesta }}</p>
-
-<form method="POST">
-{% csrf_token %}
-
-<button name="accion" value="aceptar"
-class="bg-green-500 px-4 py-2 rounded">
-Aceptar
-</button>
-
-<button name="accion" value="rechazar"
-class="bg-red-500 px-4 py-2 rounded">
-Rechazar
-</button>
-
-<input type="datetime-local" name="nueva_fecha">
-
-<button name="accion" value="reprogramar"
-class="bg-yellow-500 px-4 py-2 rounded">
-Reprogramar
-</button>
-
-</form>
-
-{% endif %}
-
-
-<button name="accion" value="aceptar"
-class="bg-green-500 px-4 py-2 rounded">
-Aceptar
-</button>
-
-<button name="accion" value="rechazar"
-class="bg-red-500 px-4 py-2 rounded">
-Rechazar
-</button>
-
-<input type="datetime-local" name="nueva_fecha">
-
-<button name="accion" value="reprogramar"
-class="bg-yellow-500 px-4 py-2 rounded">
-Reprogramar
-</button>
-
-</form>
-
-{% endif %}
+</body>
+</html>

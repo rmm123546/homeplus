@@ -253,7 +253,10 @@ class="space-y-6 max-w-2xl bg-white/5 p-10 rounded-2xl border border-white/10">
 <span class="text-sm text-gray-400">Requiere visita</span>
 </div>
 
-<div><label class="label-pro">Fecha</label>{{ form.fecha_visita }}</div>
+<div id="campoFecha" style="display:none;">
+    <label class="label-pro">Fecha</label>
+    {{ form.fecha_visita }}
+</div>
 
 <!-- CIUDAD OCULTA -->
 <input type="hidden" name="ciudad" value="Bogotá">
@@ -506,6 +509,10 @@ document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"))
 document.getElementById(seccion).classList.add("active")
 
 initAutocomplete()
+    const checkbox = document.querySelector('input[name="requiere_visita"]')
+    checkbox.addEventListener("change", toggleFecha)
+
+    toggleFecha()
 }
 
 function openLogoutModal(){
@@ -517,6 +524,17 @@ document.getElementById("logoutModal").style.display = "none"
 }
 
 </script>
+<script>
+    function toggleFecha() {
+    const checkbox = document.querySelector('input[name="requiere_visita"]');
+    const campoFecha = document.getElementById("campoFecha");
 
+    if (checkbox.checked) {
+        campoFecha.style.display = "block";
+    } else {
+        campoFecha.style.display = "none";
+    }
+}
+</script>
 </body>
 </html>
